@@ -1,0 +1,9 @@
+[Unit]
+Description=Personnel Change Monitor
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/slack-reminder.env
+ExecStart=/usr/bin/python3 /home/user/claude-agent/monitor_personnel_changes.py
+StandardOutput=journal
+StandardError=journal

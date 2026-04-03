@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Personnel Change Monitor every morning
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+Persistent=true
+Unit=personnel-monitor.service
+
+[Install]
+WantedBy=timers.target
