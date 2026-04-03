@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Slack Mention Reminder every hour
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1h
+Unit=slack-reminder.service
+
+[Install]
+WantedBy=timers.target
