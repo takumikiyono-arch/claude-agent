@@ -16,8 +16,9 @@ from slack_sdk.errors import SlackApiError
 # ── 設定 ──────────────────────────────────────────────────────────────────────
 SLACK_TOKEN   = os.environ["SLACK_BOT_TOKEN"]   # xoxp-... or xoxb-... token
 MY_USER_ID    = "U0973MEH3V0"
-THRESHOLD_SEC = 3 * 60 * 60   # 3 hours
+THRESHOLD_SEC = 1 * 60 * 60   # 1 hour
 LOOKBACK_SEC  = 24 * 60 * 60  # how far back to scan (24 h)
+ACTIVE_HOURS  = range(8, 20)  # 8:00〜19:59 のみ実行（20以降はスキップ）
 # ─────────────────────────────────────────────────────────────────────────────
 
 client = WebClient(token=SLACK_TOKEN)
@@ -162,6 +163,11 @@ def send_dm(text: str) -> None:
 
 def main() -> None:
     now_ts = time.time()
+    local_hour = datetime.fromtimestamp(now_ts).hour
+    if local_hour not in ACTIVE_HOURS:
+        print(f"[INFO] 現在 {local_hour}時 — 実行時間外（8〜19時のみ）のためスキップ。")
+        return
+
     print(f"[INFO] Check started at {datetime.fromtimestamp(now_ts, tz=timezone.utc).isoformat()}")
 
     unanswered = find_unanswered_mentions(now_ts)

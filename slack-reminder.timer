@@ -1,9 +1,10 @@
 [Unit]
-Description=Run Slack Mention Reminder every hour
+Description=Run Slack Mention Reminder every hour between 08:00 and 19:00
 
 [Timer]
-OnBootSec=1min
-OnUnitActiveSec=1h
+OnCalendar=*-*-* 08..19:00:00
+AccuracySec=1min
+Persistent=true
 Unit=slack-reminder.service
 
 [Install]
