@@ -154,9 +154,11 @@ def build_reminder_text(items: list[dict]) -> str:
     return "\n".join(lines)
 
 
+NOTIFY_CHANNEL = "C0AS4CZGZJL"   # #清野通知bot
+
+
 def send_dm(text: str) -> None:
-    dm_channel = get_dm_channel(MY_USER_ID)
-    client.chat_postMessage(channel=dm_channel, text=text, mrkdwn=True)
+    client.chat_postMessage(channel=NOTIFY_CHANNEL, text=f"<@{MY_USER_ID}> {text}", mrkdwn=True)
     print("[INFO] DM sent.")
 
 

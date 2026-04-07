@@ -11,7 +11,8 @@ import datetime
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-SLACK_USER_ID = "U0973MEH3V0"
+SLACK_USER_ID   = "U0973MEH3V0"
+SLACK_CHANNEL_ID = "C0AS4CZGZJL"   # #清野通知bot
 
 QUOTES = [
     {
@@ -201,7 +202,7 @@ def send_quote():
     message = build_message(quote)
 
     try:
-        client.chat_postMessage(channel=SLACK_USER_ID, text=message)
+        client.chat_postMessage(channel=SLACK_CHANNEL_ID, text=f"<@{SLACK_USER_ID}> {message}")
         print(f"Quote sent: {quote['author']}")
         return True
     except SlackApiError as e:

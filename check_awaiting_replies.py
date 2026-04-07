@@ -318,10 +318,9 @@ def send_reminder(slack_items, gmail_items):
         return
 
     client = WebClient(token=token)
-    resp   = client.conversations_open(users=MY_USER_ID)
-    dm_ch  = resp["channel"]["id"]
+    dm_ch  = "C0AS4CZGZJL"   # #清野通知bot
 
-    lines = [":bell: *返信待ちリマインド*\n"]
+    lines = [f"<@{MY_USER_ID}> :bell: *返信待ちリマインド*\n"]
 
     if slack_items:
         lines.append(f"*Slack — {SLACK_THRESHOLD_HOURS}時間以上返信なし（{len(slack_items)}件）*")
