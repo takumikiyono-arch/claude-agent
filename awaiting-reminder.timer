@@ -1,0 +1,11 @@
+[Unit]
+Description=Run awaiting-reminder daily at 09:00 and 14:00
+
+[Timer]
+# 平日 9:00 と 14:00 に実行（土日も含む。平日のみにする場合は DayOfWeek=Mon..Fri を追加）
+OnCalendar=*-*-* 09,14:00:00
+AccuracySec=1min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
