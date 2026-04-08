@@ -4,6 +4,6 @@ Description=Slack Mention Reminder
 [Service]
 Type=oneshot
 EnvironmentFile=/etc/slack-reminder.env
-ExecStart=/usr/bin/python3 /home/user/claude-agent/check_slack_mentions.py
+ExecStart=/bin/bash /home/user/claude-agent/run_check.sh
 StandardOutput=journal
 StandardError=journal
