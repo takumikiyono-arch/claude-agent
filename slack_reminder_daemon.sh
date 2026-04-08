@@ -26,6 +26,7 @@ while true; do
     if [ "$HOUR" -ge 8 ] && [ "$HOUR" -le 19 ] && [ "$MINUTE" -eq 0 ]; then
         echo "[INFO] $(date '+%Y-%m-%d %H:%M') — チェック開始"
         python3 "$SCRIPT_DIR/check_slack_mentions.py" || true
+        python3 "$SCRIPT_DIR/check_outgoing_reminders.py" || true
         # 二重実行防止のため70秒待機
         sleep 70
     fi

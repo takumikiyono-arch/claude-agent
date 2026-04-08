@@ -16,4 +16,8 @@ if [ -d "$SCRIPT_DIR/.venv" ]; then
     source "$SCRIPT_DIR/.venv/bin/activate"
 fi
 
+# 自分宛メンションへの未返信チェック（既存）
 python3 "$SCRIPT_DIR/check_slack_mentions.py"
+
+# 自分が送ったSlack/Gmailメッセージへの未返信チェック（新規）
+python3 "$SCRIPT_DIR/check_outgoing_reminders.py"
