@@ -2,13 +2,13 @@
 """
 Slack Mention Reminder
 ----------------------
-自分(@U0973MEH3V0)宛のメンションのうち、3時間以上返信もスタンプもしていないものを
+自分(@U0973MEH3V0)宛のメンションのうち、1時間以上返信もスタンプもしていないものを
 検索し、未対応のものがあれば自分自身にDMでリマインドを送る。
 """
 
 import os
 import time
-from datetime import datetime, timezone
+from datetime import datetime
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -108,7 +108,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
                     msg_ts = float(msg["ts"])
                     if msg_ts > cutoff:
-                        # Newer than 3 h – still within grace period
+                        # Newer than 1 h – still within grace period
                         continue
 
                     # Check whether the user already responded
@@ -117,9 +117,8 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
                     if user_reacted(ch_id, msg["ts"]):
                         continue
 
-                    sender   = msg.get("user", "unknown")
-                    msg_time = datetime.fromtimestamp(msg_ts, tz=timezone.utc)
-                    elapsed  = int((now_ts - msg_ts) / 3600)
+                    sender  = msg.get("user", "unknown")
+                    elapsed = int((now_ts - msg_ts) / 3600)
 
                     unanswered.append({
                         "channel_id":   ch_id,
@@ -128,7 +127,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
                         "ts":           msg["ts"],
                         "text":         text[:120],
                         "elapsed_h":    elapsed,
-                        "msg_time_utc": msg_time.strftime("%Y-%m-%d %H:%M UTC"),
+                        "msg_time_jst": datetime.fromtimestamp(msg_ts).strftime("%Y-%m-%d %H:%M JST"),
                     })
 
         except SlackApiError as e:
@@ -139,14 +138,14 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
 def build_reminder_text(items: list[dict]) -> str:
     lines = [
-        f":bell: *未返信のメンションが {len(items)} 件あります*（3時間以上経過）\n"
+        f":bell: *未返信のメンションが {len(items)} 件あります*（1時間以上経過）\n"
     ]
     for i, item in enumerate(items, 1):
         link = (
             f"https://slack.com/archives/{item['channel_id']}/p{item['ts'].replace('.', '')}"
         )
         lines.append(
-            f"*{i}.* <#{item['channel_id']}> – {item['msg_time_utc']}"
+            f"*{i}.* <#{item['channel_id']}> – {item['msg_time_jst']}"
             f"（{item['elapsed_h']}時間以上前）\n"
             f"   送信者: <@{item['sender']}>\n"
             f"   内容: _{item['text']}…_\n"
@@ -168,7 +167,7 @@ def main() -> None:
         print(f"[INFO] 現在 {local_hour}時 — 実行時間外（8〜19時のみ）のためスキップ。")
         return
 
-    print(f"[INFO] Check started at {datetime.fromtimestamp(now_ts, tz=timezone.utc).isoformat()}")
+    print(f"[INFO] Check started at {datetime.fromtimestamp(now_ts).strftime('%Y-%m-%d %H:%M:%S JST')}")
 
     unanswered = find_unanswered_mentions(now_ts)
 
