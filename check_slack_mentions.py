@@ -139,7 +139,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
 def build_reminder_text(items: list[dict]) -> str:
     lines = [
-        f":bell: *未返信のメンションが {len(items)} 件あります*（3時間以上経過）\n"
+        f":bell: *未返信のメンションが {len(items)} 件あります*（1時間以上経過）\n"
     ]
     for i, item in enumerate(items, 1):
         link = (
@@ -149,7 +149,7 @@ def build_reminder_text(items: list[dict]) -> str:
             f"*{i}.* <#{item['channel_id']}> – {item['msg_time_utc']}"
             f"（{item['elapsed_h']}時間以上前）\n"
             f"   送信者: <@{item['sender']}>\n"
-            f"   内容: _{item['text']}…_\n"
+            f"   内容: _{item['text']}_\n"
             f"   {link}\n"
         )
     return "\n".join(lines)
