@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # slack_reminder_daemon.sh
-# 8:00〜19:00 の間、毎時0分に check_slack_mentions.py を実行するデーモン。
+# 8:00〜19:00 の間、毎時0分に両チェックスクリプトを実行するデーモン。
+#
 # バックグラウンド起動例:
-#   SLACK_BOT_TOKEN=xoxp-... nohup bash slack_reminder_daemon.sh >> /tmp/slack_reminder.log 2>&1 &
+#   export SLACK_BOT_TOKEN=xoxp-...
+#   export GMAIL_TOKEN_FILE=/path/to/token.json       # 省略可
+#   nohup bash slack_reminder_daemon.sh >> /tmp/slack_reminder.log 2>&1 &
 
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -26,6 +29,7 @@ while true; do
     if [ "$HOUR" -ge 8 ] && [ "$HOUR" -le 19 ] && [ "$MINUTE" -eq 0 ]; then
         echo "[INFO] $(date '+%Y-%m-%d %H:%M') — チェック開始"
         python3 "$SCRIPT_DIR/check_slack_mentions.py" || true
+        python3 "$SCRIPT_DIR/check_awaiting_replies.py" || true
         # 二重実行防止のため70秒待機
         sleep 70
     fi
