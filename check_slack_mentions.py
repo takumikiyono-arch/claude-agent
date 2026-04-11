@@ -108,7 +108,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
                     msg_ts = float(msg["ts"])
                     if msg_ts > cutoff:
-                        # Newer than 3 h – still within grace period
+                        # Newer than 1 h – still within grace period
                         continue
 
                     # Check whether the user already responded
@@ -139,7 +139,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
 def build_reminder_text(items: list[dict]) -> str:
     lines = [
-        f":bell: *未返信のメンションが {len(items)} 件あります*（3時間以上経過）\n"
+        f":bell: *未返信のメンションが {len(items)} 件あります*（1時間以上経過）\n"
     ]
     for i, item in enumerate(items, 1):
         link = (
