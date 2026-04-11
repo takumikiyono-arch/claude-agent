@@ -1,0 +1,9 @@
+[Unit]
+Description=Outbound Message Reminder (Slack DM + Gmail)
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/slack-reminder.env
+ExecStart=/usr/bin/python3 /home/user/claude-agent/check_outbound_reminders.py
+StandardOutput=journal
+StandardError=journal

@@ -1,0 +1,13 @@
+[Unit]
+Description=Run Outbound Message Reminder twice a day (09:00 and 14:00)
+
+[Timer]
+# 毎日 9:00 と 14:00 に実行
+OnCalendar=*-*-* 09:00:00
+OnCalendar=*-*-* 14:00:00
+AccuracySec=1min
+Persistent=true
+Unit=outbound-reminder.service
+
+[Install]
+WantedBy=timers.target
