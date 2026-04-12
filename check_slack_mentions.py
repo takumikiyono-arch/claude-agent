@@ -2,7 +2,7 @@
 """
 Slack Mention Reminder
 ----------------------
-自分(@U0973MEH3V0)宛のメンションのうち、3時間以上返信もスタンプもしていないものを
+自分(@U0973MEH3V0)宛のメンションのうち、1時間以上返信もスタンプもしていないものを
 検索し、未対応のものがあれば自分自身にDMでリマインドを送る。
 """
 
@@ -59,11 +59,11 @@ def user_replied_in_thread(channel: str, thread_ts: str) -> bool:
 
 
 def fetch_joined_channels() -> list[dict]:
-    """Return all public/private channels the bot/user has joined."""
+    """Return all channels (public, private, group DMs) the bot/user has joined."""
     channels = []
     try:
         for page in client.conversations_list(
-            types="public_channel,private_channel",
+            types="public_channel,private_channel,mpim",
             exclude_archived=True,
         ):
             channels.extend(page["channels"])
@@ -108,7 +108,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
                     msg_ts = float(msg["ts"])
                     if msg_ts > cutoff:
-                        # Newer than 3 h – still within grace period
+                        # Newer than 1 h – still within grace period
                         continue
 
                     # Check whether the user already responded
@@ -139,7 +139,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
 def build_reminder_text(items: list[dict]) -> str:
     lines = [
-        f":bell: *未返信のメンションが {len(items)} 件あります*（3時間以上経過）\n"
+        f":bell: *未返信のメンションが {len(items)} 件あります*（1時間以上経過）\n"
     ]
     for i, item in enumerate(items, 1):
         link = (
