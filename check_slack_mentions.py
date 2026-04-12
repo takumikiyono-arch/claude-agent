@@ -2,8 +2,9 @@
 """
 Slack Mention Reminder
 ----------------------
-自分(@U0973MEH3V0)宛のメンションのうち、3時間以上返信もスタンプもしていないものを
-検索し、未対応のものがあれば自分自身にDMでリマインドを送る。
+自分(@U0973MEH3V0)宛のメンションのうち、返信もスタンプもしていないものを検索し、
+未対応のものがあれば自分自身にDMでリマインドを送る。
+8〜19時の間に毎時間実行することを想定している。
 """
 
 import os
@@ -108,7 +109,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
                     msg_ts = float(msg["ts"])
                     if msg_ts > cutoff:
-                        # Newer than 3 h – still within grace period
+                        # 猶予時間（THRESHOLD_SEC）以内のメッセージはスキップ
                         continue
 
                     # Check whether the user already responded
@@ -139,7 +140,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
 def build_reminder_text(items: list[dict]) -> str:
     lines = [
-        f":bell: *未返信のメンションが {len(items)} 件あります*（3時間以上経過）\n"
+        f":bell: *未返信のメンションが {len(items)} 件あります*\n"
     ]
     for i, item in enumerate(items, 1):
         link = (
