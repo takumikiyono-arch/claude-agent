@@ -1,0 +1,9 @@
+[Unit]
+Description=Awaiting Reply Reminder (Slack + Gmail)
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/awaiting-reply.env
+ExecStart=/usr/bin/python3 /home/user/claude-agent/check_awaiting_replies.py
+StandardOutput=journal
+StandardError=journal

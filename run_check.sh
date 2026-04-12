@@ -17,3 +17,4 @@ if [ -d "$SCRIPT_DIR/.venv" ]; then
 fi
 
 python3 "$SCRIPT_DIR/check_slack_mentions.py"
+python3 "$SCRIPT_DIR/check_awaiting_replies.py"
