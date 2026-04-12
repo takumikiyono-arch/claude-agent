@@ -19,7 +19,7 @@ fi
 echo "[INFO] Slack リマインドデーモン起動 (PID $$)"
 
 while true; do
-    HOUR=$(date +%H | sed 's/^0//')   # 先頭0を除去して数値化
+    HOUR=$(date +%-H)   # 先頭0なしの時間（0〜23）
     MINUTE=$(date +%M)
 
     # 8〜19時の間かつ毎時0分±1分に実行
