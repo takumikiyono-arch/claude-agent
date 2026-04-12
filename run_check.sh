@@ -5,7 +5,7 @@
 #   bash run_check.sh
 #
 # cron 設定例 (crontab -e):
-#   0 * * * * SLACK_BOT_TOKEN=xoxp-... /path/to/claude-agent/run_check.sh >> /var/log/slack_reminder.log 2>&1
+#   0 8-19 * * * SLACK_BOT_TOKEN=xoxp-... /path/to/claude-agent/run_check.sh >> /var/log/slack_reminder.log 2>&1
 
 set -euo pipefail
 
