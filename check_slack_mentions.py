@@ -2,8 +2,9 @@
 """
 Slack Mention Reminder
 ----------------------
-自分(@U0973MEH3V0)宛のメンションのうち、3時間以上返信もスタンプもしていないものを
+自分(@U0973MEH3V0)宛のメンションのうち、1時間以上返信もスタンプもしていないものを
 検索し、未対応のものがあれば自分自身にDMでリマインドを送る。
+毎時0分（8:00〜19:00）に実行されることを想定。
 """
 
 import os
@@ -16,9 +17,9 @@ from slack_sdk.errors import SlackApiError
 # ── 設定 ──────────────────────────────────────────────────────────────────────
 SLACK_TOKEN   = os.environ["SLACK_BOT_TOKEN"]   # xoxp-... or xoxb-... token
 MY_USER_ID    = "U0973MEH3V0"
-THRESHOLD_SEC = 1 * 60 * 60   # 1 hour
+THRESHOLD_SEC = 1 * 60 * 60   # 1 hour — これより古いメンションをリマインド対象にする
 LOOKBACK_SEC  = 24 * 60 * 60  # how far back to scan (24 h)
-ACTIVE_HOURS  = range(8, 20)  # 8:00〜19:59 のみ実行（20以降はスキップ）
+ACTIVE_HOURS  = range(8, 20)  # 8:00〜19:00 のみ実行（それ以外はスキップ）
 # ─────────────────────────────────────────────────────────────────────────────
 
 client = WebClient(token=SLACK_TOKEN)
@@ -108,7 +109,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
                     msg_ts = float(msg["ts"])
                     if msg_ts > cutoff:
-                        # Newer than 3 h – still within grace period
+                        # Still within grace period (less than THRESHOLD_SEC old)
                         continue
 
                     # Check whether the user already responded
@@ -138,8 +139,9 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
 
 
 def build_reminder_text(items: list[dict]) -> str:
+    threshold_h = THRESHOLD_SEC // 3600
     lines = [
-        f":bell: *未返信のメンションが {len(items)} 件あります*（3時間以上経過）\n"
+        f":bell: *未返信のメンションが {len(items)} 件あります*（{threshold_h}時間以上経過）\n"
     ]
     for i, item in enumerate(items, 1):
         link = (
