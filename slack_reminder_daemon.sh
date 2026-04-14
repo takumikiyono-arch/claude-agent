@@ -19,8 +19,8 @@ fi
 echo "[INFO] Slack リマインドデーモン起動 (PID $$)"
 
 while true; do
-    HOUR=$(date +%H | sed 's/^0//')   # 先頭0を除去して数値化
-    MINUTE=$(date +%M)
+    HOUR=$((10#$(date +%H)))   # 先頭0を除去して数値化（8進数誤認防止）
+    MINUTE=$((10#$(date +%M)))
 
     # 8〜19時の間かつ毎時0分±1分に実行
     if [ "$HOUR" -ge 8 ] && [ "$HOUR" -le 19 ] && [ "$MINUTE" -eq 0 ]; then
