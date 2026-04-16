@@ -8,7 +8,7 @@ Slack Mention Reminder
 
 import os
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -19,6 +19,7 @@ MY_USER_ID    = "U0973MEH3V0"
 THRESHOLD_SEC = 1 * 60 * 60   # 1 hour
 LOOKBACK_SEC  = 24 * 60 * 60  # how far back to scan (24 h)
 ACTIVE_HOURS  = range(8, 20)  # 8:00〜19:59 のみ実行（20以降はスキップ）
+JST           = timezone(timedelta(hours=9))
 # ─────────────────────────────────────────────────────────────────────────────
 
 client = WebClient(token=SLACK_TOKEN)
@@ -118,7 +119,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
                         continue
 
                     sender   = msg.get("user", "unknown")
-                    msg_time = datetime.fromtimestamp(msg_ts, tz=timezone.utc)
+                    msg_time = datetime.fromtimestamp(msg_ts, tz=JST)
                     elapsed  = int((now_ts - msg_ts) / 3600)
 
                     unanswered.append({
@@ -128,7 +129,7 @@ def find_unanswered_mentions(now_ts: float) -> list[dict]:
                         "ts":           msg["ts"],
                         "text":         text[:120],
                         "elapsed_h":    elapsed,
-                        "msg_time_utc": msg_time.strftime("%Y-%m-%d %H:%M UTC"),
+                        "msg_time_jst": msg_time.strftime("%Y-%m-%d %H:%M JST"),
                     })
 
         except SlackApiError as e:
@@ -146,7 +147,7 @@ def build_reminder_text(items: list[dict]) -> str:
             f"https://slack.com/archives/{item['channel_id']}/p{item['ts'].replace('.', '')}"
         )
         lines.append(
-            f"*{i}.* <#{item['channel_id']}> – {item['msg_time_utc']}"
+            f"*{i}.* <#{item['channel_id']}> – {item['msg_time_jst']}"
             f"（{item['elapsed_h']}時間以上前）\n"
             f"   送信者: <@{item['sender']}>\n"
             f"   内容: _{item['text']}…_\n"
@@ -163,9 +164,10 @@ def send_dm(text: str) -> None:
 
 def main() -> None:
     now_ts = time.time()
-    local_hour = datetime.fromtimestamp(now_ts).hour
+    jst_now = datetime.fromtimestamp(now_ts, tz=JST)
+    local_hour = jst_now.hour
     if local_hour not in ACTIVE_HOURS:
-        print(f"[INFO] 現在 {local_hour}時 — 実行時間外（8〜19時のみ）のためスキップ。")
+        print(f"[INFO] 現在 {local_hour}時 JST — 実行時間外（8〜19時のみ）のためスキップ。")
         return
 
     print(f"[INFO] Check started at {datetime.fromtimestamp(now_ts, tz=timezone.utc).isoformat()}")
