@@ -1,9 +1,9 @@
 [Unit]
-Description=Slack Mention Reminder
+Description=Slack & Gmail 未返信リマインダー
 
 [Service]
 Type=oneshot
 EnvironmentFile=/etc/slack-reminder.env
-ExecStart=/usr/bin/python3 /home/user/claude-agent/check_slack_mentions.py
+ExecStart=/usr/bin/python3 /home/user/claude-agent/reminder.py
 StandardOutput=journal
 StandardError=journal
