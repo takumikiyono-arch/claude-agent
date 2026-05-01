@@ -9,9 +9,12 @@ Slack Mention Reminder
 import os
 import time
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+
+JST = ZoneInfo("Asia/Tokyo")
 
 # ── 設定 ──────────────────────────────────────────────────────────────────────
 SLACK_TOKEN   = os.environ["SLACK_BOT_TOKEN"]   # xoxp-... or xoxb-... token
@@ -163,9 +166,10 @@ def send_dm(text: str) -> None:
 
 def main() -> None:
     now_ts = time.time()
-    local_hour = datetime.fromtimestamp(now_ts).hour
+    jst_now = datetime.fromtimestamp(now_ts, tz=JST)
+    local_hour = jst_now.hour
     if local_hour not in ACTIVE_HOURS:
-        print(f"[INFO] 現在 {local_hour}時 — 実行時間外（8〜19時のみ）のためスキップ。")
+        print(f"[INFO] 現在 JST {jst_now.strftime('%H:%M')} — 実行時間外（8〜19時のみ）のためスキップ。")
         return
 
     print(f"[INFO] Check started at {datetime.fromtimestamp(now_ts, tz=timezone.utc).isoformat()}")
