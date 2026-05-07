@@ -1,0 +1,19 @@
+# Slack API Token の設定ファイル
+# このファイルを slack_token.conf にコピーしてトークンを記入してください:
+#   cp slack_token.conf.example slack_token.conf
+#   nano slack_token.conf
+#
+# トークンの取得方法:
+#   1. https://api.slack.com/apps → 対象アプリを選択（または新規作成）
+#   2. "OAuth & Permissions" → "User OAuth Token" をコピー
+#
+# 必要なOAuthスコープ (User Token Scopes):
+#   channels:history  - パブリックチャンネルのメッセージ読み取り
+#   channels:read     - パブリックチャンネル一覧取得
+#   groups:history    - プライベートチャンネルのメッセージ読み取り
+#   groups:read       - プライベートチャンネル一覧取得
+#   im:write          - DM チャンネルを開く
+#   chat:write        - メッセージ送信
+#   reactions:read    - リアクション情報取得
+#   users:read        - ユーザー情報取得（任意）
+SLACK_BOT_TOKEN=xoxp-ここにトークンを貼り付けてください
