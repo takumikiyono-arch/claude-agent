@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-# run_check.sh — 毎時間 cron から呼び出すラッパー
+# run_check.sh — cron / 手動実行ラッパー
+#
+# 実行する 2 つのチェック:
+#   1. check_slack_mentions.py    — 自分宛メンションへの未返信 (1時間以上)
+#   2. check_pending_replies.py   — 自分の送信メッセージへの未返信
+#                                   Slack: 1日以上 / Gmail: 3日以上
+#
 # 使い方:
 #   export SLACK_BOT_TOKEN=xoxp-...
 #   bash run_check.sh
@@ -16,4 +22,8 @@ if [ -d "$SCRIPT_DIR/.venv" ]; then
     source "$SCRIPT_DIR/.venv/bin/activate"
 fi
 
+echo "=== [1/2] Slack メンション未返信チェック ==="
 python3 "$SCRIPT_DIR/check_slack_mentions.py"
+
+echo "=== [2/2] 送信メッセージ・メール未返信チェック ==="
+python3 "$SCRIPT_DIR/check_pending_replies.py"

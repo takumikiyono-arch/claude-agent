@@ -1,0 +1,9 @@
+[Unit]
+Description=Pending Reply Reminder (Slack 1-day / Gmail 3-day)
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/slack-reminder.env
+ExecStart=/usr/bin/python3 /home/user/claude-agent/check_pending_replies.py
+StandardOutput=journal
+StandardError=journal
